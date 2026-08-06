@@ -1,6 +1,6 @@
 # AWS Deadline Cloud for Houdini
 
-### [User guide](https://aws-deadline.github.io/) | [Service documentation](https://docs.aws.amazon.com/deadline-cloud/) | [Deadline Cloud on GitHub](https://github.com/aws-deadline/) 
+### [User guide](https://docs.aws.amazon.com/deadline-cloud/latest/userguide/sidefx-houdini.html) | [Service documentation](https://docs.aws.amazon.com/deadline-cloud/) | [Deadline Cloud on GitHub](https://github.com/aws-deadline/) 
 
 [![pypi](https://img.shields.io/pypi/v/deadline-cloud-for-houdini.svg?style=flat)](https://pypi.python.org/pypi/deadline-cloud-for-houdini)
 [![python](https://img.shields.io/pypi/pyversions/deadline-cloud-for-houdini.svg?style=flat)](https://pypi.python.org/pypi/deadline-cloud-for-houdini)
@@ -26,7 +26,7 @@ ability to run Houdini efficiently on your render farm.
 
 This library requires:
 
-1. Houdini 19.5, 20.0, 20.5 or 21.0
+1. Houdini 19.5, 20.0, 20.5, 21.0 or 22.0
 1. Python 3.9 or higher; and
 1. Linux, Windows, or a macOS operating system.
 
@@ -135,7 +135,7 @@ create a public GitHub issue in this project.
 
 ## Telemetry
 
-See [telemetry](https://github.com/aws-deadline/deadline-cloud-for-houdini/blob/release/docs/telemetry.md) for more information.
+See the [telemetry section in the user guide](https://docs.aws.amazon.com/deadline-cloud/latest/userguide/opt-out.html) for more information.
 
 ## License
 

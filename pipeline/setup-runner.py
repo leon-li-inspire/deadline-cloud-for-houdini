@@ -3,6 +3,7 @@
 #!/usr/bin/env python3
 """Setup runner for Houdini integration tests in CodeBuild."""
 import argparse
+import getpass
 import hashlib
 import os
 import platform
@@ -40,6 +41,12 @@ HOUDINI_VERSION_CONFIG = {
         "clang": "clang15.0_14",
         "python": "3.11",
     },
+    "22.0.368": {
+        "gcc": "gcc14.2",
+        "vc": "vc143",
+        "clang": "clang17.0_15",
+        "python": "3.13",
+    },
 }
 
 HOUDINI_CHECKSUMS = {
@@ -62,6 +69,11 @@ HOUDINI_CHECKSUMS = {
         "linux": "a87451f9146d52051a9ba142d535936638351526a48cba0c6156a221f3be58e6",
         "windows": "a78e468e99d1be3476b46062e3a043ecc435751b9a9f92e39bee414ace8ce59e",
         "macos": "3fc918428b22b3c32704d1163a6b1b08723ece71e5e0172e941167549d4d5b25",
+    },
+    "22.0.368": {
+        "linux": "8765335f090a8329768b415b64bc9fb80a0d9963b13f63455ad042e32d353616",
+        "windows": "b72c4ff9fff20e8cc9449ff1dd57dfab4c52421f77b267412fb5c9288b2a3c49",
+        "macos": "a51dedfb764475e1da600432f40d213cd08d628e7ba2f5e3ccf7f8b9ecda6955",
     },
 }
 
@@ -124,7 +136,9 @@ def setup_linux(houdini_versions):
         == 0
         else "yum"
     )
-    run([pkg_mgr, "install", "-y", "bc"])
+    # bc is required by the Houdini installer; libatomic provides
+    # libatomic.so.1, which Houdini 22.0's hython links against.
+    run([pkg_mgr, "install", "-y", "bc", "libatomic"])
 
     for version in houdini_versions:
         major_minor = ".".join(version.split(".")[:2])
@@ -353,6 +367,13 @@ def setup_macos(houdini_versions):
             sys.exit(1)
 
         houdini_dmg.unlink(missing_ok=True)
+
+    # The sudo Houdini .pkg installer leaves ~/Library/Preferences/houdini/<ver>
+    # root-owned; hand it back to the build user so the non-sudo submitter install
+    # can write its package JSON. Before the loop so it also runs on cached runners.
+    prefs_root = Path("~/Library/Preferences/houdini").expanduser()
+    prefs_root.mkdir(parents=True, exist_ok=True)
+    run(["sudo", "chown", "-R", f"{getpass.getuser()}:staff", str(prefs_root)], check=False)
 
     print("Installing Houdini submitter...")
     for version in houdini_versions:
